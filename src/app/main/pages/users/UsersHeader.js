@@ -4,18 +4,25 @@ import Input from '@material-ui/core/Input';
 import Paper from '@material-ui/core/Paper';
 import { ThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { selectMainTheme } from 'app/store/fuse/settingsSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchText } from './store';
 
 function UsersHeader(props) {
+	const dispatch = useDispatch();
 	const mainTheme = useSelector(selectMainTheme);
+	const [search, setSearch] = useState('');
+
+	useEffect(() => {
+		dispatch(setSearchText(search));
+	}, [dispatch, search]);
 
 	return (
 		<div className="flex flex-1 w-full items-center justify-between">
 			<div className="flex items-center">
 				<FuseAnimate animation="transition.expandIn" delay={300}>
-					<Icon className="text-32">shopping_basket</Icon>
+					<Icon className="text-32">people</Icon>
 				</FuseAnimate>
 				<FuseAnimate animation="transition.slideLeftIn" delay={300}>
 					<Typography className="hidden sm:flex mx-0 sm:mx-12" variant="h6">
@@ -36,7 +43,8 @@ function UsersHeader(props) {
 								inputProps={{
 									'aria-label': 'Search'
 								}}
-								onChange={ev => console.log(ev)}
+								value={search}
+								onChange={({ target }) => setSearch(target.value)}
 							/>
 						</Paper>
 					</FuseAnimate>

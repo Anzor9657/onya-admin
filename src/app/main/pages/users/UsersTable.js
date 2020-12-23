@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 function UsersTable(props) {
 	const dispatch = useDispatch();
 	const styles = useStyles();
-	const { users, pagination } = useSelector(state => {
+	const { users, pagination, search } = useSelector(state => {
 		return state.users;
 	});
 	const [loading, setLoading] = useState(true);
@@ -38,8 +38,8 @@ function UsersTable(props) {
 
 	const getUsersRequest = useCallback(() => {
 		setLoading(true);
-		dispatch(getUsers({ page, perPage })).then(() => setLoading(false));
-	}, [dispatch, page, perPage]);
+		dispatch(getUsers({ page, perPage, search })).then(() => setLoading(false));
+	}, [dispatch, page, perPage, search]);
 
 	useEffect(() => {
 		getUsersRequest();
@@ -55,6 +55,10 @@ function UsersTable(props) {
 
 	function handleChangeRowsPerPage(event) {
 		setPerPage(event.target.value);
+	}
+
+	function redirectToUserPage(id) {
+		props.history.push(`/users/${id}`);
 	}
 
 	if (loading) {
@@ -82,7 +86,13 @@ function UsersTable(props) {
 					<TableBody>
 						{data.map(user => {
 							return (
-								<TableRow className="h-64 cursor-pointer" hover tabIndex={-1} key={user.id}>
+								<TableRow
+									className="h-64 cursor-pointer"
+									hover
+									tabIndex={-1}
+									key={user.id}
+									onClick={() => redirectToUserPage(user.id)}
+								>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
 										{user.id}
 									</TableCell>

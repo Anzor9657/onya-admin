@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import FuseAnimate from '@fuse/core/FuseAnimate/FuseAnimate';
-import { getTrades } from './store';
+import { getTrades, openDialog } from './store';
 import UsersTableHead from './TradesTableHead';
 
 function TradesTable(props) {
@@ -32,6 +32,10 @@ function TradesTable(props) {
 	useEffect(() => {
 		setData(trades);
 	}, [dispatch, trades]);
+
+	function openEditDialog(trade) {
+		return () => dispatch(openDialog({ type: 'edit', trade }));
+	}
 
 	if (loading) {
 		return <FuseLoading />;
@@ -58,7 +62,13 @@ function TradesTable(props) {
 					<TableBody>
 						{data.map(trade => {
 							return (
-								<TableRow className="h-64 cursor-pointer" hover tabIndex={-1} key={trade.id}>
+								<TableRow
+									className="h-64 cursor-pointer"
+									hover
+									tabIndex={-1}
+									key={trade.id}
+									onClick={openEditDialog(trade)}
+								>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
 										{trade.id}
 									</TableCell>

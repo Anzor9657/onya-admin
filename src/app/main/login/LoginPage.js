@@ -8,9 +8,11 @@ import { darken } from '@material-ui/core/styles/colorManipulator';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import React from 'react';
-import { useDispatch } from 'react-redux'
-import {submitLogin} from 'app/auth/store/loginSlice';
+import React, { useEffect } from 'react';
+import history from '@history';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitLogin } from 'app/auth/store/loginSlice';
+import logo from 'assets/logo.svg';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -19,9 +21,16 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function LoginPage() {
+function LoginPage(props) {
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const { success } = useSelector(state => state.auth.login);
+
+	useEffect(() => {
+		if (success) {
+			history.push(`/users`);
+		}
+	}, [props.history, success]);
 
 	const { form, handleChange, resetForm } = useForm({
 		email: '',
@@ -44,7 +53,7 @@ function LoginPage() {
 				<FuseAnimate animation="transition.expandIn">
 					<Card className="w-full max-w-384 rounded-8">
 						<CardContent className="flex flex-col items-center justify-center p-32">
-							<img className="w-128 m-32" src="assets/images/logos/fuse.svg" alt="logo" />
+							<img className="w-128 m-32" src={logo} alt="logo" />
 
 							<Typography variant="h6" className="mt-16 mb-32">
 								LOGIN TO YOUR ACCOUNT

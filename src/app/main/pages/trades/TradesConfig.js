@@ -2,7 +2,18 @@ import React from 'react';
 
 const TradesConfig = {
 	settings: {
-		layout: {}
+		layout: {
+			config: {
+				scroll: 'content',
+				toolbar: {
+					display: false
+				},
+				footer: {
+					display: false
+				},
+				mode: 'fullwidth'
+			}
+		}
 	},
 	routes: [
 		{

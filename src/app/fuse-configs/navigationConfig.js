@@ -20,7 +20,7 @@ const navigationConfig = [
 				title: 'Users',
 				translate: 'Users',
 				type: 'item',
-				icon: 'users',
+				icon: 'people',
 				url: '/users'
 			},
 			{
@@ -28,7 +28,7 @@ const navigationConfig = [
 				title: 'Trades',
 				translate: 'Trades',
 				type: 'item',
-				icon: 'trades',
+				icon: 'local_offer',
 				url: '/trades'
 			}
 		]

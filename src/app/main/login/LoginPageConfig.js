@@ -3,7 +3,19 @@ import React from 'react';
 const LoginPageConfig = {
 	settings: {
 		layout: {
-			config: {}
+			config: {
+				scroll: 'content',
+				navbar: {
+					display: false
+				},
+				toolbar: {
+					display: false
+				},
+				footer: {
+					display: false
+				},
+				mode: 'fullwidth'
+			}
 		}
 	},
 	routes: [
