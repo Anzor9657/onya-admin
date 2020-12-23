@@ -1,19 +1,19 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import FuseUtils from '@fuse/utils';
-import LoginConfig from 'app/pages/login/LoginPageConfig';
-import ExampleConfig from 'app/main/example/ExampleConfig';
+import LoginConfig from 'app/main/login/LoginPageConfig';
+import UsersConfig from 'app/main/pages/users/UsersConfig';
+import TradesConfig from 'app/main/pages/trades/TradesConfig';
 
 const authConfigs = [LoginConfig];
-const routeConfigs = [ExampleConfig];
+const routeConfigs = [UsersConfig, TradesConfig];
 
 const routes = [
 	...FuseUtils.generateRoutesFromConfigs(routeConfigs, ['admin']),
 	...FuseUtils.generateRoutesFromConfigs(authConfigs, null),
 	{
 		path: '/',
-		auth: null,
-		component: () => <Redirect to="/example" />
+		component: () => <Redirect to="/users" />
 	}
 ];
 

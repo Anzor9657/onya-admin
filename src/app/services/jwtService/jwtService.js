@@ -50,7 +50,10 @@ class JwtService extends FuseUtils.EventEmitter {
 			axios.post('/api/auth/register', data).then(response => {
 				if (response.data.user) {
 					this.setSession(response.data.access_token);
-					resolve(response.data.user);
+					resolve({
+						...response.data.user,
+						role: ['admin']
+					});
 				} else {
 					reject(response.data.error);
 				}
@@ -87,7 +90,10 @@ class JwtService extends FuseUtils.EventEmitter {
 				.then(({ data: response }) => {
 					if (response.data.login) {
 						this.setSession(response.data.login.access_token);
-						resolve(response.data.login.user);
+						resolve({
+							...response.data.login.user,
+							role: ['admin']
+						});
 					} else {
 						reject(response.data.error);
 					}
@@ -108,7 +114,10 @@ class JwtService extends FuseUtils.EventEmitter {
 					const access_token = this.getAccessToken();
 					if (response.data.me && access_token) {
 						this.setSession(access_token);
-						resolve(response.data.me);
+						resolve({
+							...response.data.me,
+							role: ['admin']
+						});
 					} else {
 						this.logout();
 						reject(new Error('Failed to login with token.'));

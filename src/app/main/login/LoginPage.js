@@ -9,8 +9,8 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import React from 'react';
-
-import jwt from '../../services/jwtService';
+import { useDispatch } from 'react-redux'
+import {submitLogin} from 'app/auth/store/loginSlice';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 function LoginPage() {
 	const classes = useStyles();
+	const dispatch = useDispatch();
 
 	const { form, handleChange, resetForm } = useForm({
 		email: '',
@@ -32,7 +33,7 @@ function LoginPage() {
 	}
 
 	function handleSubmit(ev) {
-		jwt.signInWithEmailAndPassword(form);
+		dispatch(submitLogin(form));
 		ev.preventDefault();
 		resetForm();
 	}

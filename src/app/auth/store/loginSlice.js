@@ -6,11 +6,10 @@ import { setUserData } from './userSlice';
 
 export const submitLogin = ({ email, password }) => async dispatch => {
 	return jwtService
-		.signInWithEmailAndPassword(email, password)
+		.signInWithEmailAndPassword({ email, password })
 		.then(user => {
 			dispatch(setUserData(user));
-
-			return dispatch(loginSuccess());
+			dispatch(loginSuccess());
 		})
 		.catch(error => {
 			return dispatch(loginError(error));
