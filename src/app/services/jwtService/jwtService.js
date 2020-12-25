@@ -55,7 +55,7 @@ class JwtService extends FuseUtils.EventEmitter {
 						role: ['admin']
 					});
 				} else {
-					reject(response.data.error);
+					reject(response?.data?.error);
 				}
 			});
 		});
@@ -95,7 +95,7 @@ class JwtService extends FuseUtils.EventEmitter {
 							role: ['admin']
 						});
 					} else {
-						reject(response.data.error);
+						reject(response?.data?.error);
 					}
 				});
 		});

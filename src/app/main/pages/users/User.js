@@ -12,11 +12,14 @@ import withReducer from 'app/store/withReducer';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { getUser } from './store';
+import { getUser, updateUser } from './store';
 import reducer from './store';
 import { Avatar, Card, CardContent, Radio, RadioGroup } from '@material-ui/core';
 
@@ -60,8 +63,29 @@ function User(props) {
 
 	const classes = useStyles(props);
 	const [noUser, noNoUser] = useState(false);
+	const [isValid, setIsValid] = useState(false);
+	const [workRadiuseLabel, setWorkRadiuseLabel] = useState(null);
 	const { form, handleChange, setForm } = useForm(null);
 	const routeParams = useParams();
+
+	const workRadiuses = [
+		{
+			id: 'UP_TO_25KM',
+			title: 'up to 25 km'
+		},
+		{
+			id: 'UP_TO_50KM',
+			title: 'up to 50 km'
+		},
+		{
+			id: 'UP_TO_100KM',
+			title: 'up to 100km'
+		},
+		{
+			id: 'FROM_TO_100KM',
+			title: 'from to 100km'
+		}
+	];
 
 	useDeepCompareEffect(() => {
 		function updateUserState() {
@@ -84,6 +108,27 @@ function User(props) {
 		}
 	}, [form, user, setForm]);
 
+	useEffect(() => {
+		const value = workRadiuses.find(({ id }) => id === form?.work_radius);
+		if (value) {
+			setWorkRadiuseLabel(value.title);
+		}
+	}, [form, workRadiuses]);
+
+	useEffect(() => {
+		let status = false;
+		if (form?.name?.trim()) {
+			status = true;
+		}
+		if (form?.last_name?.trim()) {
+			status = true;
+		}
+		if (form?.password?.trim() === form?.confirmed_password?.trim()) {
+			status = true;
+		}
+		setIsValid(status);
+	}, [form, setForm]);
+
 	function handleUploadChange(e) {
 		const file = e.target.files[0];
 		if (!file) {
@@ -99,10 +144,6 @@ function User(props) {
 		reader.onerror = () => {
 			console.log('error on load image');
 		};
-	}
-
-	function canBeSubmitted() {
-		return form.name.length > 0 && !_.isEqual(user, form);
 	}
 
 	if (noUser) {
@@ -168,8 +209,8 @@ function User(props) {
 								className="whitespace-nowrap normal-case"
 								variant="contained"
 								color="secondary"
-								disabled={!canBeSubmitted()}
-								onClick={() => console.log(form)}
+								disabled={!isValid}
+								onClick={() => dispatch(updateUser(form))}
 							>
 								Save
 							</Button>
@@ -179,7 +220,7 @@ function User(props) {
 			}
 			content={
 				form && (
-					<div className="p-12 flex flex-nowrap">
+					<form className="p-12 flex flex-nowrap" noValidate autoComplete="off">
 						<div className="flex flex-col sm:w-2/3">
 							<div className="w-full p-12">
 								<Card className="rounded-8">
@@ -200,22 +241,25 @@ function User(props) {
 												value={form.name}
 												onChange={handleChange}
 												variant="outlined"
+												error={!form.name.trim()}
 												fullWidth
 											/>
 											<TextField
 												className="mt-8 mb-16"
+												required
 												label="Last Name"
 												id="last_name"
 												name="last_name"
 												value={form.last_name}
 												onChange={handleChange}
 												variant="outlined"
+												error={!form.last_name.trim()}
 												fullWidth
 											/>
 										</div>
 										<div className="flex flex-no-wrap justify-between align-items-center w-full">
 											<FormControl component="fieldset">
-												<FormLabel component="legend">Position</FormLabel>
+												<FormLabel component="legend">Position*</FormLabel>
 												<RadioGroup
 													aria-label="position_id"
 													name="position_id"
@@ -260,6 +304,7 @@ function User(props) {
 												value={form.email}
 												onChange={handleChange}
 												variant="outlined"
+												error={!form.email.trim()}
 												fullWidth
 											/>
 											<TextField
@@ -274,19 +319,26 @@ function User(props) {
 											/>
 										</div>
 										<div className={classes.row}>
+											<FormControl className="mt-8 mb-16 sm:w-1/3" variant="outlined">
+												<InputLabel id="work_radius-label">Work Radius</InputLabel>
+												<Select
+													labelId="work_radius-label"
+													id="work_radius"
+													name="work_radius"
+													renderValue={() => <>{workRadiuseLabel}</>}
+													value={form.work_radius}
+													onChange={handleChange}
+													label="Work Radius"
+												>
+													{workRadiuses.map(item => (
+														<MenuItem key={item.id} value={item.id}>
+															{item.title}
+														</MenuItem>
+													))}
+												</Select>
+											</FormControl>
 											<TextField
-												className="mt-8 mb-16"
-												required
-												label="Work Radius"
-												id="work_radius"
-												name="work_radius"
-												value={form.work_radius}
-												onChange={handleChange}
-												variant="outlined"
-												fullWidth
-											/>
-											<TextField
-												className="mt-8 mb-16"
+												className="mt-8 mb-16 sm:w-2/3"
 												label="Year of experience"
 												id="year_of_experience"
 												name="year_of_experience"
@@ -297,7 +349,7 @@ function User(props) {
 												fullWidth
 											/>
 											<TextField
-												className="mt-8 mb-16"
+												className="mt-8 mb-16 sm:w-2/3"
 												label="Trades"
 												id="trade"
 												name="trade"
@@ -324,7 +376,6 @@ function User(props) {
 										<div className={classes.row}>
 											<TextField
 												className="mt-8 mb-16"
-												required
 												label="Company name"
 												id="company_name"
 												name="company_name"
@@ -347,7 +398,6 @@ function User(props) {
 										<div className="flex justify-center">
 											<TextField
 												className="mt-8 mb-16"
-												required
 												label="Company Web site"
 												id="company_web_site"
 												name="company_web_site"
@@ -384,6 +434,7 @@ function User(props) {
 											className="hidden"
 											id="button-file"
 											type="file"
+											value=""
 											onChange={handleUploadChange}
 										/>
 										<div className="flex gap-10 flex-wrap justify-center">
@@ -411,11 +462,22 @@ function User(props) {
 											variant="outlined"
 											fullWidth
 										/>
+										<TextField
+											className="mt-8 mb-16"
+											label="Confirmed password"
+											id="confirmed_password"
+											name="confirmed_password"
+											value={form.confirmed_password}
+											onChange={handleChange}
+											variant="outlined"
+											error={form.confirmed_password !== form.password}
+											fullWidth
+										/>
 									</CardContent>
 								</Card>
 							</div>
 						</div>
-					</div>
+					</form>
 				)
 			}
 			innerScroll

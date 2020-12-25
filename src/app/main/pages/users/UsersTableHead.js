@@ -1,6 +1,8 @@
+import { TableSortLabel } from '@material-ui/core';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
 
 const rows = [
@@ -16,39 +18,42 @@ const rows = [
 		align: 'left',
 		disablePadding: false,
 		label: 'Name',
-		sort: false
+		sort: true
 	},
 	{
 		id: 'email',
 		align: 'left',
 		disablePadding: false,
 		label: 'Email',
-		sort: false
+		sort: true
 	},
 	{
-		id: 'company',
+		id: 'company_name',
 		align: 'left',
 		disablePadding: false,
 		label: 'Company',
-		sort: false
+		sort: true
 	},
 	{
-		id: 'companyWebSite',
+		id: 'company_web_site',
 		align: 'left',
 		disablePadding: false,
 		label: 'Company web site',
-		sort: false
+		sort: true
 	},
 	{
-		id: 'regDate',
+		id: 'created_at',
 		align: 'left',
 		disablePadding: false,
 		label: 'Register date',
-		sort: false
+		sort: true
 	}
 ];
 
 function UsersTableHead(props) {
+	const createSortHandler = property => event => {
+		props.onRequestSort(event, property);
+	};
 	return (
 		<TableHead>
 			<TableRow className="h-64">
@@ -59,8 +64,22 @@ function UsersTableHead(props) {
 							key={row.id}
 							align={row.align}
 							padding={row.disablePadding ? 'none' : 'default'}
+							sortDirection={props.order.id === row.id ? props.order.direction : false}
 						>
-							{row.label}
+							{row.sort && (
+								<Tooltip
+									title="Sort"
+									placement={row.align === 'right' ? 'bottom-end' : 'bottom-start'}
+									enterDelay={300}
+								>
+									<TableSortLabel
+										direction={props.order.direction}
+										onClick={createSortHandler(row.id)}
+									>
+										{row.label}
+									</TableSortLabel>
+								</Tooltip>
+							)}
 						</TableCell>
 					);
 				})}

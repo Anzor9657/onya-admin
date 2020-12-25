@@ -12,6 +12,7 @@ import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import FuseLoading from '@fuse/core/FuseLoading';
 import FuseAnimate from '@fuse/core/FuseAnimate/FuseAnimate';
+import _ from '@lodash';
 import { getUsers } from './store';
 import UsersTableHead from './UsersTableHead';
 
@@ -35,6 +36,10 @@ function UsersTable(props) {
 	const [data, setData] = useState(users);
 	const [page, setPage] = useState(1);
 	const [perPage, setPerPage] = useState(10);
+	const [order, setOrder] = useState({
+		direction: 'asc',
+		id: null
+	});
 
 	const getUsersRequest = useCallback(() => {
 		setLoading(true);
@@ -61,6 +66,20 @@ function UsersTable(props) {
 		props.history.push(`/users/${id}`);
 	}
 
+	function handleRequestSort(event, property) {
+		const id = property;
+		let direction = 'desc';
+
+		if (order.id === property && order.direction === 'desc') {
+			direction = 'asc';
+		}
+
+		setOrder({
+			direction,
+			id
+		});
+	}
+
 	if (loading) {
 		return <FuseLoading />;
 	}
@@ -81,10 +100,10 @@ function UsersTable(props) {
 		<div className="w-full flex flex-col">
 			<FuseScrollbars className="flex-grow overflow-x-auto">
 				<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
-					<UsersTableHead rowCount={data.length} />
+					<UsersTableHead rowCount={data.length} order={order} onRequestSort={handleRequestSort} />
 
 					<TableBody>
-						{data.map(user => {
+						{_.orderBy(data, [o => o[order.id]], [order.direction]).map(user => {
 							return (
 								<TableRow
 									className="h-64 cursor-pointer"
