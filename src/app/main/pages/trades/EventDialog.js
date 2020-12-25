@@ -27,7 +27,7 @@ function EventDialog(props) {
 		 * Dialog type: 'edit'
 		 */
 		if (modal.type === 'edit' && modal.trade) {
-			setForm({ title: modal.trade.title });
+			setForm(modal.trade);
 		}
 
 		/**

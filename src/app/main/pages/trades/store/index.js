@@ -38,7 +38,32 @@ export const addTrade = createAsyncThunk('trades/addTrade', async ({ title }) =>
 	return adminAddTrade;
 });
 
-export const editTrade = createAsyncThunk('trades/editTrade', async () => {});
+export const editTrade = createAsyncThunk('trades/editTrade', async data => {
+	const response = await axios.post('', {
+		operationName: 'adminUpdateTrade',
+		variables: data,
+		query: `mutation adminUpdateTrade(
+							$id: Int
+							$title: String!
+						) {
+						adminUpdateTrade(
+							input: {
+								id: $id
+								title: $title
+							}
+						) {
+						id
+						title
+					}
+				}`
+	});
+
+	const {
+		data: { adminUpdateTrade }
+	} = await response.data;
+
+	return adminUpdateTrade;
+});
 
 export const removeTrade = createAsyncThunk('trades/removeTrade', async () => {});
 
@@ -74,6 +99,15 @@ const tradesSlice = createSlice({
 		},
 		[addTrade.fulfilled]: (state, action) => {
 			state.trades.push(action.payload);
+		},
+		[editTrade.fulfilled]: (state, action) => {
+			if (action.payload) {
+				state.trades.forEach(trade => {
+					if (trade.id === action.payload.id) {
+						trade.title = action.payload.title;
+					}
+				});
+			}
 		}
 	}
 });

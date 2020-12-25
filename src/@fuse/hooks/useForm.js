@@ -6,17 +6,19 @@ function useForm(initialState, onSubmit) {
 
 	const handleChange = useCallback(event => {
 		event.persist();
-		setForm(_form => {
-			console.log(
-				event.target.name,
-				event.target.type === 'checkbox' ? event.target.checked : event.target.value
-			);
-			return _.setIn(
-				{ ..._form },
-				event.target.name,
-				event.target.type === 'checkbox' ? event.target.checked : event.target.value
-			);
-		});
+		let value = null;
+		switch (event.target.type) {
+			case 'checkbox':
+				value = event.target.checked;
+				break;
+			case 'radio':
+				value = Number(event.target.value);
+				break;
+			default:
+				value = event.target.value;
+				break;
+		}
+		setForm(_form => _.setIn({ ..._form }, event.target.name, value));
 	}, []);
 
 	const resetForm = useCallback(() => {
