@@ -32,6 +32,23 @@ const navigationConfig = [
 				url: '/trades'
 			}
 		]
+	},
+	{
+		id: 'administration',
+		title: 'administration',
+		translate: 'administration',
+		type: 'group',
+		icon: 'admin_panel_settings',
+		children: [
+			{
+				id: 'roles-component',
+				title: 'Roles',
+				translate: 'Roles',
+				type: 'item',
+				icon: 'assignment_ind',
+				url: '/roles'
+			}
+		]
 	}
 ];
 

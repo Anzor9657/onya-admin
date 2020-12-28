@@ -9,31 +9,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import FuseAnimate from '@fuse/core/FuseAnimate/FuseAnimate';
-import { getTrades, openDialog } from './store';
-import UsersTableHead from './TradesTableHead';
+import { getRoles } from './store';
+import UsersTableHead from './RolesTableHead';
 
-function TradesTable(props) {
+function RolesTable(props) {
 	const dispatch = useDispatch();
-	const { trades } = useSelector(state => state.trades);
+	const { roles } = useSelector(state => state.roles);
 	const [loading, setLoading] = useState(true);
-	const [data, setData] = useState(trades);
+	const [data, setData] = useState(roles);
 
-	const getTradesRequest = useCallback(() => {
+	const getRolesRequest = useCallback(() => {
 		setLoading(true);
-		dispatch(getTrades()).then(() => setLoading(false));
+		dispatch(getRoles()).then(() => setLoading(false));
 	}, [dispatch]);
 
 	useEffect(() => {
-		getTradesRequest();
-	}, [dispatch, getTradesRequest]);
+		getRolesRequest();
+	}, [dispatch, getRolesRequest]);
 
 	useEffect(() => {
-		setData(trades);
-	}, [dispatch, trades]);
-
-	function openEditDialog(trade) {
-		return () => dispatch(openDialog({ type: 'edit', trade }));
-	}
+		setData(roles);
+	}, [dispatch, roles]);
 
 	if (loading) {
 		return <FuseLoading />;
@@ -44,7 +40,7 @@ function TradesTable(props) {
 			<FuseAnimate delay={100}>
 				<div className="flex flex-1 items-center justify-center h-full">
 					<Typography color="textSecondary" variant="h5">
-						There are no trades!
+						There are no roles!
 					</Typography>
 				</div>
 			</FuseAnimate>
@@ -58,20 +54,17 @@ function TradesTable(props) {
 					<UsersTableHead rowCount={data.length} />
 
 					<TableBody>
-						{data.map(trade => {
+						{data.map(role => {
 							return (
-								<TableRow
-									className="h-64 cursor-pointer"
-									hover
-									tabIndex={-1}
-									key={trade.id}
-									onClick={openEditDialog(trade)}
-								>
+								<TableRow className="h-64 cursor-pointer" hover tabIndex={-1} key={role.id}>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
-										{trade.id}
+										{role.id}
 									</TableCell>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
-										{trade.title}
+										{role.readable_name}
+									</TableCell>
+									<TableCell className="p-4 md:p-16" component="th" scope="row">
+										{role.description}
 									</TableCell>
 								</TableRow>
 							);
@@ -83,4 +76,4 @@ function TradesTable(props) {
 	);
 }
 
-export default withRouter(TradesTable);
+export default withRouter(RolesTable);
