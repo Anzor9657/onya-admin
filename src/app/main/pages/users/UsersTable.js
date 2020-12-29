@@ -9,12 +9,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { makeStyles } from '@material-ui/core/styles';
 import FuseLoading from '@fuse/core/FuseLoading';
 import FuseAnimate from '@fuse/core/FuseAnimate/FuseAnimate';
 import _ from '@lodash';
-import { getUsers } from './store';
+import { getUsers, removeUser } from './store';
 import UsersTableHead from './UsersTableHead';
+import { IconButton, MenuItem, Menu } from '@material-ui/core';
+
+const ITEM_HEIGHT = 48;
 
 const useStyles = makeStyles({
 	avatar: {
@@ -40,6 +44,16 @@ function UsersTable(props) {
 		direction: 'asc',
 		id: null
 	});
+	const [anchorEl, setAnchorEl] = React.useState(null);
+	const open = Boolean(anchorEl);
+
+	const handleClick = event => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	const getUsersRequest = useCallback(() => {
 		setLoading(true);
@@ -64,6 +78,12 @@ function UsersTable(props) {
 
 	function redirectToUserPage(id) {
 		props.history.push(`/users/${id}`);
+		handleClose();
+	}
+
+	function deleteUser(id) {
+		dispatch(removeUser(id));
+		handleClose();
 	}
 
 	function handleRequestSort(event, property) {
@@ -105,13 +125,7 @@ function UsersTable(props) {
 					<TableBody>
 						{_.orderBy(data, [o => o[order.id]], [order.direction]).map(user => {
 							return (
-								<TableRow
-									className="h-64 cursor-pointer"
-									hover
-									tabIndex={-1}
-									key={user.id}
-									onClick={() => redirectToUserPage(user.id)}
-								>
+								<TableRow className="h-64 cursor-pointer" hover tabIndex={-1} key={user.id}>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
 										{user.id}
 									</TableCell>
@@ -134,7 +148,42 @@ function UsersTable(props) {
 										{user.company_web_site}
 									</TableCell>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
+										{user.role ? user.role.readable_name : '-'}
+									</TableCell>
+									<TableCell className="p-4 md:p-16" component="th" scope="row">
 										{moment(user.created_at).local().format('DD.MM.YYYY')}
+									</TableCell>
+									<TableCell className="p-4 md:p-16" component="th" scope="row">
+										<IconButton
+											aria-label="more"
+											aria-controls="long-menu"
+											aria-haspopup="true"
+											onClick={handleClick}
+										>
+											<MoreVertIcon />
+										</IconButton>
+										<Menu
+											id="long-menu"
+											anchorEl={anchorEl}
+											open={open}
+											onClose={handleClose}
+											PaperProps={{
+												style: {
+													maxHeight: ITEM_HEIGHT * 4.5,
+													width: '20ch'
+												}
+											}}
+										>
+											<MenuItem key={1} onClick={() => redirectToUserPage(user.id)}>
+												Edit
+											</MenuItem>
+											<MenuItem key={2} onClick={() => {}}>
+												Permissions
+											</MenuItem>
+											<MenuItem key={3} onClick={() => deleteUser(user.id)}>
+												Delete
+											</MenuItem>
+										</Menu>
 									</TableCell>
 								</TableRow>
 							);

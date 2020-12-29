@@ -22,7 +22,7 @@ class JwtService extends FuseUtils.EventEmitter {
 				return new Promise((resolve, reject) => {
 					if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
 						// if you ever get an unauthorized response, logout the user
-						this.emit('onAutoLogout', 'Invalid access_token');
+						this.emit('onAutoLogout', 'You session is expired!');
 						this.setSession(null);
 					}
 					throw err;
@@ -45,7 +45,7 @@ class JwtService extends FuseUtils.EventEmitter {
 			this.emit('onAutoLogin', true);
 		} else {
 			this.setSession(null);
-			this.emit('onAutoLogout', 'access_token expired');
+			this.emit('onAutoLogout', 'You session is expired!');
 		}
 	};
 

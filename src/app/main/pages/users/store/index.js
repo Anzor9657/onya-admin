@@ -13,8 +13,32 @@ export const getUsers = createAsyncThunk('users/getUsers', async ({ page, perPag
 			query
 				adminGetAllUsers($page: Int, $perPage: Int, $search: String) {
 					adminGetAllUsers(page: $page, perPage: $perPage, filters: {search: $search}) {
-						paginatorInfo { currentPage perPage total }
-						data { id name last_name email avatar created_at company_name company_abn company_web_site }
+						paginatorInfo {
+							currentPage
+							perPage
+							total
+						}
+						data {
+							id
+							name
+							last_name
+							email
+							avatar
+							created_at
+							company_name
+							company_abn
+							company_web_site
+							role {
+								id
+								name
+								readable_name
+								description
+								permissions {
+									id
+									name
+								}
+							}
+						}
 					}
 				}`
 	});
@@ -137,6 +161,18 @@ export const updateUser = createAsyncThunk('users/updateUser', async form => {
 	return adminUpdateUser;
 });
 
+export const removeUser = createAsyncThunk('users/removeUser', async id => {
+	await axios.post('', {
+		operationName: 'adminDeleteUser',
+		variables: { id },
+		query: `mutation adminDeleteUser ($id: Int!) {
+							adminDeleteUser (id: $id)
+						}`
+	});
+
+	return id;
+});
+
 const initialState = {
 	users: [],
 	user: null,
@@ -161,6 +197,9 @@ const usersSlice = createSlice({
 		},
 		[updateUser.fulfilled]: (state, action) => {
 			state.user = action.payload;
+		},
+		[removeUser.fulfilled]: (state, action) => {
+			state.users = state.users.filter(user => user.id !== action.payload);
 		}
 	}
 });

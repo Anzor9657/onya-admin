@@ -42,11 +42,25 @@ const rows = [
 		sort: true
 	},
 	{
+		id: 'role',
+		align: 'left',
+		disablePadding: false,
+		label: 'Role',
+		sort: true
+	},
+	{
 		id: 'created_at',
 		align: 'left',
 		disablePadding: false,
 		label: 'Register date',
 		sort: true
+	},
+	{
+		id: 'actions',
+		align: 'left',
+		disablePadding: false,
+		label: 'Actions',
+		sort: false
 	}
 ];
 
