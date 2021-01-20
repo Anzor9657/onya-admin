@@ -28,8 +28,6 @@ class Auth extends Component {
 	jwtCheck = () =>
 		new Promise(resolve => {
 			jwtService.on('onAutoLogin', () => {
-				this.props.showMessage({ message: 'Logging in with JWT' });
-
 				/**
 				 * Sign in and retrieve user data from Api
 				 */
@@ -38,7 +36,6 @@ class Auth extends Component {
 					.then(user => {
 						this.props.setUserData(user);
 						resolve();
-						this.props.showMessage({ message: 'Logged in with JWT' });
 					})
 					.catch(error => {
 						this.props.showMessage({ message: error.message });
@@ -75,8 +72,6 @@ class Auth extends Component {
 			});
 
 			if (auth0Service.isAuthenticated()) {
-				this.props.showMessage({ message: 'Logging in with Auth0' });
-
 				/**
 				 * Retrieve user data from Auth0
 				 */
@@ -84,8 +79,6 @@ class Auth extends Component {
 					this.props.setUserDataAuth0(tokenData);
 
 					resolve();
-
-					this.props.showMessage({ message: 'Logged in with Auth0' });
 				});
 			} else {
 				resolve();
@@ -104,8 +97,6 @@ class Auth extends Component {
 
 			firebaseService.onAuthStateChanged(authUser => {
 				if (authUser) {
-					this.props.showMessage({ message: 'Logging in with Firebase' });
-
 					/**
 					 * Retrieve user data from Firebase
 					 */
@@ -114,8 +105,6 @@ class Auth extends Component {
 							this.props.setUserDataFirebase(user, authUser);
 
 							resolve();
-
-							this.props.showMessage({ message: 'Logged in with Firebase' });
 						},
 						error => {
 							resolve();

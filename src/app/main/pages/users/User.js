@@ -210,7 +210,10 @@ function User(props) {
 								variant="contained"
 								color="secondary"
 								disabled={!isValid}
-								onClick={() => dispatch(updateUser(form))}
+								onClick={() => {
+									dispatch(updateUser(form));
+									setIsValid(false);
+								}}
 							>
 								Save
 							</Button>
