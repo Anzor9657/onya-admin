@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FuseLoading from '@fuse/core/FuseLoading';
 import FuseAnimate from '@fuse/core/FuseAnimate/FuseAnimate';
 import _ from '@lodash';
-import { getUsers, removeUser } from './store';
+import { getUsers, openDialog } from './store';
 import UsersTableHead from './UsersTableHead';
 import { IconButton, MenuItem, Menu } from '@material-ui/core';
 
@@ -44,10 +44,13 @@ function UsersTable(props) {
 		direction: 'asc',
 		id: null
 	});
-	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [selectedUser, setSelectedUser] = useState(null);
+
 	const open = Boolean(anchorEl);
 
-	const handleClick = event => {
+	const handleClick = (event, user) => {
+		setSelectedUser(user);
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -76,13 +79,13 @@ function UsersTable(props) {
 		setPerPage(event.target.value);
 	}
 
-	function redirectToUserPage(id) {
-		props.history.push(`/users/${id}`);
+	function redirectToUserPage() {
+		props.history.push(`/users/${selectedUser.id}`);
 		handleClose();
 	}
 
-	function deleteUser(id) {
-		dispatch(removeUser(id));
+	function deleteUser() {
+		dispatch(openDialog(selectedUser));
 		handleClose();
 	}
 
@@ -133,8 +136,7 @@ function UsersTable(props) {
 										{user.avatar && (
 											<img className={styles.avatar} src={user.avatar} alt="avatar" />
 										)}
-										{user.name}
-										{user.last_name}
+										{`${user.name} ${user.last_name}`}
 									</TableCell>
 									<TableCell className="p-4 md:p-16" component="th" scope="row">
 										{user.email}
@@ -158,7 +160,9 @@ function UsersTable(props) {
 											aria-label="more"
 											aria-controls="long-menu"
 											aria-haspopup="true"
-											onClick={handleClick}
+											onClick={event => {
+												handleClick(event, user);
+											}}
 										>
 											<MoreVertIcon />
 										</IconButton>
@@ -174,15 +178,9 @@ function UsersTable(props) {
 												}
 											}}
 										>
-											<MenuItem key={1} onClick={() => redirectToUserPage(user.id)}>
-												Edit
-											</MenuItem>
-											<MenuItem key={2} onClick={() => {}}>
-												Permissions
-											</MenuItem>
-											<MenuItem key={3} onClick={() => deleteUser(user.id)}>
-												Delete
-											</MenuItem>
+											<MenuItem onClick={() => redirectToUserPage()}>Edit</MenuItem>
+											<MenuItem onClick={() => {}}>Permissions</MenuItem>
+											<MenuItem onClick={() => deleteUser()}>Delete</MenuItem>
 										</Menu>
 									</TableCell>
 								</TableRow>

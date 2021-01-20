@@ -161,7 +161,7 @@ export const updateUser = createAsyncThunk('users/updateUser', async form => {
 	return adminUpdateUser;
 });
 
-export const removeUser = createAsyncThunk('users/removeUser', async id => {
+export const removeUser = createAsyncThunk('users/removeUser', async ({ id }) => {
 	await axios.post('', {
 		operationName: 'adminDeleteUser',
 		variables: { id },
@@ -169,20 +169,31 @@ export const removeUser = createAsyncThunk('users/removeUser', async id => {
 							adminDeleteUser (id: $id)
 						}`
 	});
-
-	return id;
 });
 
 const initialState = {
 	users: [],
 	user: null,
-	pagination: null
+	pagination: null,
+	modal: { isOpen: false, user: null }
 };
 
 const usersSlice = createSlice({
 	name: 'users',
 	initialState,
 	reducers: {
+		openDialog: (state, action) => {
+			state.modal = {
+				isOpen: true,
+				user: action.payload
+			};
+		},
+		closeDialog: state => {
+			state.modal = {
+				isOpen: false,
+				user: null
+			};
+		},
 		setSearchText: (state, action) => {
 			state.search = action.payload;
 		}
@@ -197,13 +208,10 @@ const usersSlice = createSlice({
 		},
 		[updateUser.fulfilled]: (state, action) => {
 			state.user = action.payload;
-		},
-		[removeUser.fulfilled]: (state, action) => {
-			state.users = state.users.filter(user => user.id !== action.payload);
 		}
 	}
 });
 
-export const { setSearchText } = usersSlice.actions;
+export const { setSearchText, openDialog, closeDialog } = usersSlice.actions;
 
 export default usersSlice.reducer;

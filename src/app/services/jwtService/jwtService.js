@@ -116,7 +116,7 @@ class JwtService extends FuseUtils.EventEmitter {
 				})
 				.then(({ data: response }) => {
 					const access_token = this.getAccessToken();
-					if (response.data.me && access_token) {
+					if (access_token) {
 						this.setSession(access_token);
 						resolve({
 							...response.data.me,
